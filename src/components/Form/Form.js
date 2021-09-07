@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import { useDispatch, useSelector } from "react-redux";
 import FileBase from "react-file-base64";
+import { useHistory } from "react-router-dom";
 
 import useStyles from "./styles";
 import { createPost, updatePost } from "../../actions/posts";
@@ -15,11 +16,14 @@ const Form = ({ currentId, setCurrentId }) => {
     createdAt: new Date(),
   });
   const post = useSelector((state) =>
-    currentId ? state.posts.find((message) => message._id === currentId) : null
+    currentId
+      ? state.posts.posts.find((message) => message._id === currentId)
+      : null
   );
   const dispatch = useDispatch();
   const classes = useStyles();
   const user = JSON.parse(localStorage.getItem("profile"));
+  const history = useHistory();
 
   useEffect(() => {
     if (post) setPostData(post);
@@ -38,7 +42,8 @@ const Form = ({ currentId, setCurrentId }) => {
     e.preventDefault();
 
     if (!currentId) {
-      dispatch(createPost({ ...postData, name: user?.result?.name }));
+      dispatch(createPost({ ...postData, name: user?.result?.name }, history));
+
       clear();
     } else {
       dispatch(
@@ -51,7 +56,7 @@ const Form = ({ currentId, setCurrentId }) => {
   if (!user?.result?.name) {
     return (
       <Paper className={classes.paper}>
-        <Typography variant="h6" align="center">
+        <Typography variant='h6' align='center'>
           Please Sign In to create memories and like others memories
         </Typography>
       </Paper>
@@ -59,29 +64,28 @@ const Form = ({ currentId, setCurrentId }) => {
   }
 
   return (
-    <Paper className={classes.paper}>
+    <Paper className={classes.paper} elevation={6}>
       <form
-        autoComplete="off"
+        autoComplete='off'
         noValidate
         className={`${classes.root} ${classes.form}`}
-        onSubmit={handleSubmit}
-      >
-        <Typography variant="h6">
+        onSubmit={handleSubmit}>
+        <Typography variant='h6'>
           {currentId ? `Editing "${post.title}"` : "Creating a Memory"}
         </Typography>
 
         <TextField
-          name="title"
-          variant="outlined"
-          label="Title"
+          name='title'
+          variant='outlined'
+          label='Title'
           fullWidth
           value={postData.title}
           onChange={(e) => setPostData({ ...postData, title: e.target.value })}
         />
         <TextField
-          name="message"
-          variant="outlined"
-          label="Message"
+          name='message'
+          variant='outlined'
+          label='Message'
           fullWidth
           multiline
           rows={4}
@@ -91,9 +95,9 @@ const Form = ({ currentId, setCurrentId }) => {
           }
         />
         <TextField
-          name="tags"
-          variant="outlined"
-          label="Tags (coma separated)"
+          name='tags'
+          variant='outlined'
+          label='Tags (coma separated)'
           fullWidth
           value={postData.tags}
           onChange={(e) =>
@@ -102,7 +106,7 @@ const Form = ({ currentId, setCurrentId }) => {
         />
         <div className={classes.fileInput}>
           <FileBase
-            type="file"
+            type='file'
             multiple={false}
             onDone={({ base64 }) =>
               setPostData({ ...postData, selectedFile: base64 })
@@ -111,21 +115,19 @@ const Form = ({ currentId, setCurrentId }) => {
         </div>
         <Button
           className={classes.buttonSubmit}
-          variant="contained"
-          color="primary"
-          size="large"
-          type="submit"
-          fullWidth
-        >
+          variant='contained'
+          color='primary'
+          size='large'
+          type='submit'
+          fullWidth>
           Submit
         </Button>
         <Button
-          variant="contained"
-          color="secondary"
-          size="small"
+          variant='contained'
+          color='secondary'
+          size='small'
           onClick={clear}
-          fullWidth
-        >
+          fullWidth>
           Clear
         </Button>
       </form>

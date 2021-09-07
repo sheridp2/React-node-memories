@@ -56,6 +56,7 @@ export default function Auth() {
   };
 
   const googleSuccess = async (res) => {
+    console.log("Google Success");
     const result = res?.profileObj;
     const token = res?.tokenId;
 
